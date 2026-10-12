@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Excel Quest</title>
+<style>
+:root{--bg:#f3f6f2;--card:#fff;--ink:#1c2a22;--mut:#5d6f63;--line:#cfdacf;--acc:#1d6f42;--accb:#e3f1e8;--ok:#1d6f42;--bad:#b3261e;--hl:#fff3b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a15;--card:#1a251e;--ink:#e8f0ea;--mut:#9fb2a6;--line:#2f4036;--acc:#4fc17f;--accb:#203a2a;--ok:#4fc17f;--bad:#ff8a80;--hl:#5a4d10}}
+:root[data-theme="dark"]{--bg:#121a15;--card:#1a251e;--ink:#e8f0ea;--mut:#9fb2a6;--line:#2f4036;--acc:#4fc17f;--accb:#203a2a;--ok:#4fc17f;--bad:#ff8a80;--hl:#5a4d10}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font:700 28px/1.2 Georgia,"Times New Roman",serif;margin:0}
+.pts{font-weight:600;color:var(--acc)}
+.tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.tabs button{flex:1;min-width:140px;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;text-align:left}
+.tabs button.on{border-color:var(--acc);background:var(--accb);font-weight:600}
+.dots{display:flex;gap:6px;margin-bottom:12px}
+.dots i{width:28px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.done{background:var(--acc)}.dots i.cur{outline:2px solid var(--acc);outline-offset:1px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+h2{margin:0 0 6px;font-size:20px}
+.story{margin:0 0 14px;color:var(--mut)}
+.wrap{overflow-x:auto;margin-bottom:14px}
+table{border-collapse:collapse;font:14px Consolas,"Courier New",monospace;min-width:100%}
+th,td{border:1px solid var(--line);padding:5px 10px;min-width:70px;height:30px;text-align:left}
+th{background:var(--accb);color:var(--mut);font-weight:600;text-align:center}
+th.r{min-width:34px;width:34px}
+td.t{background:var(--hl);font-weight:700}
+.bar{display:flex;align-items:center;gap:8px;border:2px solid var(--acc);border-radius:8px;padding:4px 8px;background:var(--card)}
+.bar b{color:var(--acc);font:600 14px Consolas,monospace;min-width:34px}
+.bar input{flex:1;border:0;outline:0;background:transparent;color:var(--ink);font:16px Consolas,"Courier New",monospace;padding:6px 0;min-width:0}
+.row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.row button{padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.row button.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+:root[data-theme="dark"] .row button.p{color:#0b1a11}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .row button.p{color:#0b1a11}}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#msg{margin-top:12px;min-height:24px;font-weight:600}
+#msg.ok{color:var(--ok)}#msg.bad{color:var(--bad)}#msg.n{color:var(--mut);font-weight:400}
+code{font-family:Consolas,monospace;background:var(--accb);padding:1px 5px;border-radius:4px}
+.tip{color:var(--mut);font-size:14px;margin-top:14px}
+.app{display:grid;grid-template-columns:210px 1fr;gap:16px;margin-top:16px}
+@media(max-width:640px){.app{grid-template-columns:1fr}}
+nav{display:flex;flex-direction:column;gap:6px}
+nav button{padding:9px 12px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;text-align:left}
+nav button.on{border-color:var(--acc);background:var(--accb);font-weight:600}
+nav button:disabled{opacity:.55;cursor:default}
+nav small{color:var(--mut);font-weight:400;display:block}
+#guide ul{padding-left:20px}#guide li{margin:6px 0}
+.opt{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
+.opt:has(input:checked){border-color:var(--acc);background:var(--accb)}
+.opt input{margin-right:8px}
+[hidden]{display:none!important}
+#tpl a{color:var(--acc);font-weight:600}#tpl p{margin:0 0 14px}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Excel Quest</h1><span class="pts" id="pts"></span></header>
+<div class="app"><nav id="menu"></nav><section><div id="home" class="card"></div><div id="guide" class="card"></div><div id="tpl" class="card"></div><div id="game"><div class="dots" id="dots"></div><div class="card">
+<h2 id="t"></h2><p class="story" id="s"></p>
+<div class="wrap"><table id="g"></table></div>
+<div class="bar" id="bar"><b id="cn"></b><input id="f" autocomplete="off" spellcheck="false" placeholder="Escribe la fórmula, ejemplo: =A1+B1"></div>
+<div id="opts"></div><div class="row"><button id="gb">📖 Guía</button><button class="p" id="ck">Comprobar</button><button id="hb">Pista</button><button id="sb">Ver solución</button><button id="nx" hidden>Siguiente</button></div>
+<div id="msg" class="n"></div>
+</div></div></section></div>
+<p class="tip">Puedes separar con <code>;</code> o con <code>,</code>. Usa punto para decimales (0.5).</p>
+</main>
+<script>
+const L=[
+{n:"Nivel 1 · Operaciones",ex:[
+{t:"Total de un producto",s:"En la tienda vendieron 3 cuadernos a $2.5 cada uno. Calcula el total en D2.",g:[["Producto","Cantidad","Precio","Total"],["Cuaderno",3,2.5,null]],c:"D2",a:7.5,h:"Multiplica la cantidad por el precio con *.",sol:"=B2*C2"},
+{t:"Ganancia del día",s:"Resta los gastos a los ingresos. Resultado en B4.",g:[["Concepto","Monto"],["Ingresos",500],["Gastos",320],["Ganancia",null]],c:"B4",a:180,h:"Usa - entre las dos celdas.",sol:"=B2-B3"},
+{t:"Dividir la cuenta",s:"Una cuenta de $90 se divide entre 3 amigos. ¿Cuánto paga cada uno? Resultado en B4.",g:[["Concepto","Valor"],["Cuenta",90],["Amigos",3],["Cada uno",null]],c:"B4",a:30,h:"La división usa /.",sol:"=B2/B3"},
+{t:"Precio con IVA",s:"El IVA es 13%. Calcula el precio final (precio + IVA) en B4.",g:[["Concepto","Valor"],["Precio",200],["IVA",0.13],["Final",null]],c:"B4",a:226,h:"Final = precio + precio × IVA.",sol:"=B2+B2*B3"},
+{t:"Orden de operaciones",s:"Salario base más horas extra pagadas a $3.5 cada una. Total en B5.",g:[["Concepto","Valor"],["Salario",400],["Horas extra",5],["Pago por hora",3.5],["Total",null]],c:"B5",a:417.5,h:"Excel multiplica antes de sumar. Suma el salario al producto de horas × pago.",sol:"=B2+B3*B4"}]},
+{n:"Nivel 2 · Funciones",ex:[
+{t:"Ventas de la semana",s:"Suma las ventas de lunes a viernes. Resultado en B7.",g:[["Día","Ventas"],["Lunes",120],["Martes",95],["Miércoles",150],["Jueves",80],["Viernes",110],["Total",null]],c:"B7",a:555,h:"SUMA con un rango: B2:B6.",sol:"=SUMA(B2:B6)",need:/SUMA|SUM/i},
+{t:"Promedio de notas",s:"Calcula el promedio de las 4 notas en B6.",g:[["Examen","Nota"],["Parcial 1",8],["Parcial 2",9],["Parcial 3",7],["Final",10],["Promedio",null]],c:"B6",a:8.5,h:"Existe una función llamada PROMEDIO.",sol:"=PROMEDIO(B2:B5)",need:/PROMEDIO|AVERAGE/i},
+{t:"Rango de ventas",s:"¿Cuál es la diferencia entre la mejor y la peor venta? Resultado en B7.",g:[["Día","Ventas"],["Lunes",40],["Martes",75],["Miércoles",22],["Jueves",90],["Viernes",63],["Diferencia",null]],c:"B7",a:68,h:"MAX menos MIN, ambos sobre B2:B6.",sol:"=MAX(B2:B6)-MIN(B2:B6)",need:/MAX/i},
+{t:"Contar pedidos",s:"Algunos días no hubo pedidos (celda vacía). Cuenta en B8 cuántos días sí hubo.",g:[["Día","Pedidos"],["Lunes",5],["Martes",8],["Miércoles",null],["Jueves",3],["Viernes",null],["Sábado",9],["Días con pedidos",null]],c:"B8",a:4,h:"CONTAR cuenta solo celdas con números.",sol:"=CONTAR(B2:B7)",need:/CONTAR|COUNT/i},
+{t:"Ahorro del 10%",s:"Aparta el 10% del total de gastos. Resultado en B6.",g:[["Gasto","Monto"],["Comida",25],["Transporte",40],["Servicios",15],["Otros",60],["Ahorro 10%",null]],c:"B6",a:14,h:"Suma el rango y multiplica por 0.1.",sol:"=SUMA(B2:B5)*0.1",need:/SUMA|SUM/i}]},
+{n:"Nivel 3 · Lógica",ex:[
+{t:"Aprobado o reprobado",s:"Aprueba con 60 o más. Escribe en C2 \"Aprobado\" o \"Reprobado\".",g:[["Alumno","Nota","Resultado"],["Ana",75,null]],c:"C2",a:"Aprobado",h:"=SI(condición; si cumple; si no cumple). Los textos van entre comillas.",sol:'=SI(B2>=60;"Aprobado";"Reprobado")',need:/SI|IF/i},
+{t:"Bono por ventas",s:"Si las ventas superan 1000, el bono es 10% de las ventas. Si no, 0. Resultado en C2.",g:[["Vendedor","Ventas","Bono"],["Luis",1200,null]],c:"C2",a:120,h:"SI(B2>1000; B2*0.1; 0)",sol:"=SI(B2>1000;B2*0.1;0)",need:/SI|IF/i},
+{t:"Dos condiciones (Y)",s:"Aprueba solo si nota ≥ 60 Y asistencia ≥ 75. Escribe \"Aprueba\" o \"Reprueba\" en D2.",g:[["Alumno","Nota","Asistencia","Resultado"],["Marta",85,70,null]],c:"D2",a:"Reprueba",h:"Dentro del SI usa Y(condición1; condición2).",sol:'=SI(Y(B2>=60;C2>=75);"Aprueba";"Reprueba")',need:/Y\(|AND/i},
+{t:"Una u otra (O)",s:"Hay descuento si la compra es ≥ 50 O el cliente es socio (\"Si\"). Escribe \"Descuento\" o \"Sin descuento\" en D2.",g:[["Cliente","Compra","Socio","Resultado"],["Pedro",30,"Si",null]],c:"D2",a:"Descuento",h:"O(B2>=50; C2=\"Si\") dentro del SI.",sol:'=SI(O(B2>=50;C2="Si");"Descuento";"Sin descuento")',need:/O\(|OR/i},
+{t:"SI dentro de SI",s:"Nota ≥ 90: \"Excelente\". Nota ≥ 60: \"Bueno\". Menos: \"Mejorar\". Resultado en C2.",g:[["Alumno","Nota","Nivel"],["Sofía",72,null]],c:"C2",a:"Bueno",h:"En la parte \"si no\" del primer SI, escribe otro SI.",sol:'=SI(B2>=90;"Excelente";SI(B2>=60;"Bueno";"Mejorar"))',need:/SI|IF/i}]}
+];
+["0","1","2"].forEach((d,i)=>L[i].id=d);
+L.unshift({id:"z",n:"Nivel 0 · Desde cero",ex:[
+{t:"Dirección de una celda",s:"¿Cuál es la dirección de la celda amarilla?",g:[["Producto","Cantidad","Precio"],["Lápiz",10,0.5],["Cuaderno",3,2.5]],c:"C3",o:["C3","3C","B3","C2"],a:0,h:"Primero la letra de la columna y luego el número de la fila."},
+{t:"Columnas y filas",s:"¿Qué son las columnas en Excel?",g:null,o:["Líneas verticales con letras (A, B, C)","Líneas horizontales con números (1, 2, 3)","Cada cuadrito de la hoja"],a:0,h:"Mira arriba de la hoja: A, B, C..."},
+{t:"Inicio de una fórmula",s:"¿Con qué signo empieza toda fórmula?",g:null,o:["=","#","@","$"],a:0,h:"Es el mismo signo de las igualdades."},
+{t:"Escribir una fórmula",s:"Quieres sumar lo que hay en A1 y en B1. ¿Cuál es la fórmula?",g:[[4,6]],o:["=A1+B1","A1+B1","=A1B1","=A1 y B1"],a:0,h:"Empieza con = y usa el signo + entre las celdas."},
+{t:"Tu primera fórmula",s:"Suma las dos celdas en C1.",g:[[4,6,null]],c:"C1",a:10,h:"=A1+B1",sol:"=A1+B1"},
+{t:"Copiar fórmulas",s:"Ya hiciste una fórmula y quieres repetirla en las filas de abajo. ¿Qué haces?",g:null,o:["Arrastro el cuadrito de la esquina de la celda","Escribo todo de nuevo","No se puede"],a:0,h:"Excel copia la fórmula y ajusta las celdas solo."},
+{t:"Cajas de lápices",s:"3 cajas con 12 lápices cada una. Calcula el total en B3.",g:[["Cajas",3],["Lápices por caja",12],["Total",null]],c:"B3",a:36,h:"Multiplica B1 por B2.",sol:"=B1*B2"},
+{t:"Atajo para copiar",s:"¿Qué atajo de teclado copia lo seleccionado?",g:null,o:["Ctrl + C","Ctrl + V","Ctrl + Z"],a:0,h:"C de Copiar."}]});
+const GD={
+z:`<p class="story">Lectura de 2 minutos.</p><ul><li><b>Celda:</b> cada cuadrito. Su nombre es columna + fila, por ejemplo <code>B3</code>.</li><li><b>Columna:</b> vertical (A, B, C). <b>Fila:</b> horizontal (1, 2, 3).</li><li><b>Fórmula:</b> siempre empieza con <code>=</code>. Ejemplo: <code>=A1+B1</code>.</li><li><b>Copiar hacia abajo:</b> arrastra el cuadrito de la esquina de la celda.</li></ul><p><b>Error común:</b> escribir <code>A1+B1</code> sin el <code>=</code>; Excel lo toma como texto.</p>`,
+0:`<p class="story">Lectura de 3 minutos.</p><ul><li><code>+</code> suma, <code>-</code> resta, <code>*</code> multiplica, <code>/</code> divide, <code>^</code> potencia.</li><li>Usa celdas en vez de números: si cambia el dato, el resultado se actualiza solo.</li><li>Orden: primero paréntesis, luego <code>*</code> y <code>/</code>, al final <code>+</code> y <code>-</code>.</li><li>Porcentajes: 13% se escribe <code>0.13</code>.</li></ul><p><b>Error común:</b> olvidar paréntesis. <code>=A1+A2*2</code> no es igual que <code>=(A1+A2)*2</code>.</p>`,
+1:`<p class="story">Lectura de 3 minutos.</p><ul><li><code>=SUMA(B2:B6)</code> suma un rango (de B2 hasta B6).</li><li><code>=PROMEDIO(B2:B6)</code> da el promedio.</li><li><code>=MAX(B2:B6)</code> y <code>=MIN(B2:B6)</code> dan el mayor y el menor.</li><li><code>=CONTAR(B2:B6)</code> cuenta las celdas que tienen números.</li></ul><p><b>Error común:</b> separar el rango con <code>;</code> en vez de <code>:</code>. Los dos puntos significan "hasta".</p>`,
+2:`<p class="story">Lectura de 5 minutos.</p><ul><li><code>=SI(condición; si se cumple; si no)</code></li><li>Comparadores: <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> <code>=</code> <code>&lt;&gt;</code> (distinto).</li><li><code>Y(a;b)</code>: se cumplen las dos. <code>O(a;b)</code>: basta con una.</li><li>Los textos van entre comillas: <code>"Aprobado"</code>.</li></ul><p><b>Error común:</b> olvidar las comillas o cerrar mal los paréntesis en SI dentro de SI.</p>`};
+L.push({id:"3",n:"Nivel 4 · Búsquedas",ex:[
+{t:"Buscar un precio",s:"Busca el precio del código de B5. Resultado en C5.",g:[["Código","Producto","Precio"],[101,"Arroz",1.5],[102,"Frijol",2],[103,"Aceite",3.5],["Buscar",103,null]],c:"C5",a:3.5,h:"BUSCARV(valor; rango; columna; FALSO). El precio es la columna 3 del rango A2:C4.",sol:"=BUSCARV(B5;A2:C4;3;FALSO)",need:/BUSCARV|VLOOKUP/i},
+{t:"Buscar un nombre",s:"Con el código de B5, trae el nombre del producto a C5.",g:[["Código","Producto","Precio"],[101,"Arroz",1.5],[102,"Frijol",2],[103,"Aceite",3.5],["Buscar",102,null]],c:"C5",a:"Frijol",h:"El nombre está en la columna 2 del rango.",sol:"=BUSCARV(B5;A2:C4;2;FALSO)",need:/BUSCARV|VLOOKUP/i},
+{t:"Salario de un empleado",s:"Busca el salario del ID de B5. Resultado en D5.",g:[["ID","Nombre","Puesto","Salario"],[1,"Ana","Cajera",450],[2,"Luis","Bodeguero",500],[3,"Marta","Gerente",900],["Buscar",3,null,null]],c:"D5",a:900,h:"El salario es la columna 4 del rango A2:D4.",sol:"=BUSCARV(B5;A2:D4;4;FALSO)",need:/BUSCARV|VLOOKUP/i},
+{t:"Total de una compra",s:"Compran 5 unidades del código 102. Calcula el total en D5 (precio × cantidad).",g:[["Código","Producto","Precio"],[101,"Arroz",1.5],[102,"Frijol",2],[103,"Aceite",3.5],["Cód. y cant.",102,5,null]],c:"D5",a:10,h:"Multiplica BUSCARV(...) por C5.",sol:"=BUSCARV(B5;A2:C4;3;FALSO)*C5",need:/BUSCARV|VLOOKUP/i},
+{t:"Caro o barato",s:"Si el precio del código de B5 es mayor a 3, escribe \"Caro\"; si no, \"Barato\". Resultado en C5.",g:[["Código","Producto","Precio"],[101,"Arroz",1.5],[102,"Frijol",2],[103,"Aceite",3.5],["Buscar",103,null]],c:"C5",a:"Caro",h:"Pon el BUSCARV dentro de la condición del SI.",sol:'=SI(BUSCARV(B5;A2:C4;3;FALSO)>3;"Caro";"Barato")',need:/BUSCARV|VLOOKUP/i}]});
+const VT=[["Vendedor","Producto","Venta"],["Ana","Arroz",100],["Luis","Frijol",150],["Ana","Frijol",80],["Luis","Arroz",120],["Ana","Arroz",60],["Resultado",null,null]];
+L.push({id:"4",n:"Nivel 5 · Condicionales",ex:[
+{t:"Contar por vendedor",s:"¿Cuántas ventas hizo Ana? Resultado en C7.",g:VT,c:"C7",a:3,h:"CONTAR.SI(rango; criterio). El texto va entre comillas.",sol:'=CONTAR.SI(A2:A6;"Ana")',need:/CONTAR\.SI|COUNTIF/i},
+{t:"Total por vendedor",s:"¿Cuánto vendió Ana en total? Resultado en C7.",g:VT,c:"C7",a:240,h:"SUMAR.SI(rango criterio; criterio; rango a sumar).",sol:'=SUMAR.SI(A2:A6;"Ana";C2:C6)',need:/SUMAR\.SI|SUMIF/i},
+{t:"Total por producto",s:"¿Cuánto se vendió de Arroz? Resultado en C7.",g:VT,c:"C7",a:280,h:"El criterio está en la columna B.",sol:'=SUMAR.SI(B2:B6;"Arroz";C2:C6)',need:/SUMAR\.SI|SUMIF/i},
+{t:"Ventas grandes",s:"¿Cuántas ventas fueron mayores a 90? Resultado en C7.",g:VT,c:"C7",a:3,h:"El criterio con operador va entre comillas: \">90\".",sol:'=CONTAR.SI(C2:C6;">90")',need:/CONTAR\.SI|COUNTIF/i},
+{t:"Suma de ventas grandes",s:"Suma solo las ventas mayores a 90. Resultado en C7.",g:VT,c:"C7",a:370,h:"Con un solo rango, SUMAR.SI suma ese mismo rango.",sol:'=SUMAR.SI(C2:C6;">90")',need:/SUMAR\.SI|SUMIF/i}]});
+L.push({id:"5",n:"Nivel 6 · Datos",ex:[
+{t:"Filtrar",s:"Quieres ver solo las ventas de Ana y ocultar las demás filas. ¿Qué usas?",g:null,o:["Filtro (pestaña Datos)","Borrar las otras filas","Cambiar el color"],a:0,h:"Es un botón con forma de embudo."},
+{t:"Ordenar",s:"Quieres ordenar las ventas de mayor a menor. ¿Qué usas?",g:null,o:["Ordenar (pestaña Datos)","La función SUMA","Combinar celdas"],a:0,h:"Está junto al filtro."},
+{t:"Formato condicional",s:"Quieres que las ventas mayores a 100 se pinten de verde solas. ¿Qué usas?",g:null,o:["Formato condicional","Relleno manual celda por celda","Autosuma"],a:0,h:"Está en la pestaña Inicio."},
+{t:"Tabla dinámica",s:"Tienes 5,000 filas de ventas y quieres el total por vendedor sin escribir fórmulas. ¿Qué usas?",g:null,o:["Tabla dinámica (pestaña Insertar)","Contar a mano","Un filtro"],a:0,h:"Resume los datos arrastrando campos."},
+{t:"Referencia fija",s:"En una fórmula, ¿qué hace $B$1?",g:null,o:["Mantiene fija la celda B1 al copiar la fórmula","Convierte B1 en dinero","Borra B1"],a:0,h:"El signo $ \"ancla\" la celda."}]});
+L.push({id:"6",n:"Nivel 7 · Proyecto final",ex:[
+{t:"Total de ingresos",s:"Suma tus ingresos del mes. Resultado en B4.",g:[["Ingreso","Monto"],["Salario",600],["Extra",150],["Total",null]],c:"B4",a:750,h:"SUMA(B2:B3)",sol:"=SUMA(B2:B3)",need:/SUMA|SUM/i},
+{t:"Total de gastos",s:"Suma los gastos fijos. Resultado en B6.",g:[["Gasto","Monto"],["Alquiler",250],["Luz",30],["Agua",15],["Internet",25],["Total",null]],c:"B6",a:320,h:"SUMA(B2:B5)",sol:"=SUMA(B2:B5)",need:/SUMA|SUM/i},
+{t:"Saldo del mes",s:"Calcula cuánto te queda. Resultado en B4.",g:[["Concepto","Monto"],["Ingresos",750],["Gastos",320],["Saldo",null]],c:"B4",a:430,h:"Ingresos menos gastos.",sol:"=B2-B3"},
+{t:"Porcentaje gastado",s:"¿Qué parte de tus ingresos gastas? Resultado en B4 (sin multiplicar por 100).",g:[["Concepto","Monto"],["Ingresos",800],["Gastos",320],["% gastado",null]],c:"B4",a:0.4,h:"Gastos entre ingresos.",sol:"=B3/B2"},
+{t:"Alerta de gasto",s:"Si gastas más de la mitad de tus ingresos escribe \"Cuidado\"; si no, \"Bien\". Resultado en B4.",g:[["Concepto","Monto"],["Ingresos",800],["Gastos",420],["Estado",null]],c:"B4",a:"Cuidado",h:"SI(B3>B2*0.5; ...)",sol:'=SI(B3>B2*0.5;"Cuidado";"Bien")',need:/SI|IF/i}]});
+Object.assign(GD,{
+3:`<p class="story">Lectura de 5 minutos.</p><ul><li><code>=BUSCARV(valor; rango; columna; FALSO)</code> busca el valor en la <b>primera columna</b> del rango y devuelve lo que hay en la columna que indiques.</li><li>Ejemplo: <code>=BUSCARV(B5;A2:C4;3;FALSO)</code> devuelve el precio (columna 3) del código de B5.</li><li><code>FALSO</code> pide coincidencia exacta.</li></ul><p><b>Error común:</b> que el valor buscado no esté en la primera columna del rango. En Excel Online también existe BUSCARX, pero aquí practicamos BUSCARV.</p>`,
+4:`<p class="story">Lectura de 4 minutos.</p><ul><li><code>=CONTAR.SI(rango; criterio)</code> cuenta cuántas celdas cumplen.</li><li><code>=SUMAR.SI(rango; criterio; rango_suma)</code> suma solo lo que cumple.</li><li>Criterios de texto: <code>"Ana"</code>. Con operador: <code>"&gt;90"</code>.</li></ul><p><b>Error común:</b> usar rangos de distinto tamaño o olvidar las comillas del criterio.</p>`,
+5:`<p class="story">Lectura de 4 minutos. Estas herramientas se usan con el mouse, no con fórmulas.</p><ul><li><b>Ordenar y Filtro:</b> pestaña Datos.</li><li><b>Formato condicional:</b> pestaña Inicio. Pinta celdas según una regla.</li><li><b>Tabla dinámica:</b> pestaña Insertar. Resume miles de filas.</li><li><b>$B$1:</b> la celda no cambia cuando copias la fórmula.</li></ul><p>Practica cada una en tu Excel con una tabla pequeña.</p>`,
+6:`<p class="story">Lectura de 2 minutos.</p><ul><li>Aquí combinas todo: SUMA, restas, porcentajes y SI.</li><li>Cuando termines, arma tu propio presupuesto en Excel con estas mismas fórmulas.</li></ul><p><b>Tip:</b> el porcentaje es una división (gastos ÷ ingresos); da 0.4 y en Excel puedes darle formato de %.</p>`});
+const $=id=>document.getElementById(id);
+let lv=0,ix=0,hint=false,sol=false,done={},pts=0;
+try{const d=JSON.parse(localStorage.getItem("xq")||"{}");done=d.done||{};pts=d.pts||0}catch(e){}
+const save=()=>{try{localStorage.setItem("xq",JSON.stringify({done,pts}))}catch(e){}};
+const col=i=>String.fromCharCode(65+i);
+function ev(src,get){
+ const T=[],re=/\s*(?:(\d+(?:\.\d+)?)|"([^"]*)"|([A-Za-z][A-Za-z0-9_.]*)|(<>|>=|<=|[-+*\/^&()=<>;,:]))/y;
+ src=src.trim();re.lastIndex=0;
+ while(re.lastIndex<src.length){const m=re.exec(src);if(!m)throw 0;
+  if(m[1]!==undefined)T.push({k:"n",v:+m[1]});else if(m[2]!==undefined)T.push({k:"s",v:m[2]});else if(m[3])T.push({k:"i",v:m[3].toUpperCase()});else T.push({k:"o",v:m[4]})}
+ let p=0;const pk=()=>T[p],isO=(...a)=>pk()&&pk().k=="o"&&a.includes(pk().v);
+ const num=v=>{if(v===null||v==="")return 0;if(typeof v==="number")return v;if(v!==""&&!isNaN(v))return +v;throw 0};
+ const flat=a=>a.flat();
+ const F={SUMA:a=>flat(a).reduce((s,v)=>s+(typeof v=="number"?v:0),0),PROMEDIO:a=>{const n=flat(a).filter(v=>typeof v=="number");return n.reduce((s,v)=>s+v,0)/n.length},MAX:a=>Math.max(...flat(a).filter(v=>typeof v=="number")),MIN:a=>Math.min(...flat(a).filter(v=>typeof v=="number")),CONTAR:a=>flat(a).filter(v=>typeof v=="number").length,SI:a=>a[0]?a[1]:(a.length>2?a[2]:false),Y:a=>flat(a).every(Boolean),O:a=>flat(a).some(Boolean)};
+ Object.assign(F,{SUM:F.SUMA,AVERAGE:F.PROMEDIO,COUNT:F.CONTAR,IF:F.SI,AND:F.Y,OR:F.O});
+ const crit=c=>{const m=typeof c=="string"&&/^(<>|>=|<=|=|<|>)(.*)$/.exec(c);if(m){const n=m[2]!==""&&!isNaN(m[2])?+m[2]:m[2];return v=>cmp(v,m[1],n)}return v=>cmp(v,"=",c)};
+ const bv=a=>{const r=a[1],w=r.w||1,k=num(a[2]);for(let i=0;i<r.length;i+=w)if(String(r[i]).toLowerCase()==String(a[0]).toLowerCase()){const v=r[i+k-1];if(v===undefined||v===null)throw 0;return v}throw 0};
+ Object.assign(F,{BUSCARV:bv,VLOOKUP:bv,"CONTAR.SI":a=>a[0].filter(crit(a[1])).length,"SUMAR.SI":a=>{const s=a[2]||a[0],f=crit(a[1]);return a[0].reduce((t,v,i)=>t+(f(v)&&typeof s[i]=="number"?s[i]:0),0)}});
+ Object.assign(F,{COUNTIF:F["CONTAR.SI"],SUMIF:F["SUMAR.SI"]});
+ const cmp=(l,o,r)=>{if(typeof l=="string"||typeof r=="string"){l=String(l??"").toLowerCase();r=String(r??"").toLowerCase()}else{l=num(l);r=num(r)}
+  return{"=":l==r,"<>":l!=r,"<":l<r,">":l>r,"<=":l<=r,">=":l>=r}[o]};
+ function C(){let l=A();while(isO("=","<>","<",">","<=",">=")){const o=T[p++].v;l=cmp(l,o,A())}return l}
+ function A(){let l=M();while(isO("+","-","&")){const o=T[p++].v,r=M();l=o=="&"?String(l)+String(r):o=="+"?num(l)+num(r):num(l)-num(r)}return l}
+ function M(){let l=P();while(isO("*","/")){const o=T[p++].v,r=P();l=o=="*"?num(l)*num(r):num(l)/num(r);if(!isFinite(l))throw 0}return l}
+ function P(){let l=U();if(isO("^")){p++;l=Math.pow(num(l),num(P()))}return l}
+ function U(){if(isO("-")){p++;return -num(U())}if(isO("+")){p++;return num(U())}return V()}
+ function V(){const t=T[p++];if(!t)throw 0;
+  if(t.k=="n"||t.k=="s")return t.v;
+  if(t.k=="o"&&t.v=="("){const v=C();if(!isO(")"))throw 0;p++;return v}
+  if(t.k=="i"){
+   if(isO("(")){p++;const f=F[t.v];if(!f)throw 0;const a=[];if(isO(")")){p++}else{for(;;){a.push(C());if(isO(";",",")){p++;continue}if(isO(")")){p++;break}throw 0}}return f(a)}
+   if(t.v=="FALSO"||t.v=="FALSE")return false;if(t.v=="VERDADERO"||t.v=="TRUE")return true;if(!/^[A-Z]+\d+$/.test(t.v))throw 0;
+   if(isO(":")){p++;const e=T[p++];if(!e||!/^[A-Z]+\d+$/.test(e.v))throw 0;return rng(t.v,e.v,get)}
+   return get(t.v)}
+  throw 0}
+ const v=C();if(p<T.length)throw 0;return v}
+function rng(a,b,get){const pa=/([A-Z]+)(\d+)/.exec(a),pb=/([A-Z]+)(\d+)/.exec(b),o=[];
+ for(let r=+pa[2];r<=+pb[2];r++)for(let c=pa[1].charCodeAt(0);c<=pb[1].charCodeAt(0);c++)o.push(get(String.fromCharCode(c)+r));o.w=pb[1].charCodeAt(0)-pa[1].charCodeAt(0)+1;return o}
+const cur=()=>L[lv].ex[ix],key=()=>L[lv].id+"-"+ix;
+function msg(t,c){const m=$("msg");m.textContent=t;m.className=c}
+let view="home";
+function show(v){view=v;["home","guide","tpl","game"].forEach(x=>$(x).hidden=x!=v);menu()}
+function menu(){
+ $("pts").textContent=pts+" puntos";
+ $("menu").innerHTML='<button data-h="1" class="'+(view=="home"?"on":"")+'">🏠 Inicio</button>'+L.map((l,i)=>{const n=l.ex.filter((_,j)=>done[l.id+"-"+j]).length;return `<button data-i="${i}" class="${i==lv&&view!="home"&&view!="tpl"?"on":""}">${l.n}<small>${n}/${l.ex.length} ejercicios</small></button>`}).join("")+'<button data-t="1" class="'+(view=="tpl"?"on":"")+'">📁 Plantillas<small>4 descargables</small></button>';
+ $("menu").querySelectorAll("button:not([disabled])").forEach(b=>b.onclick=()=>{if(b.dataset.h)return home();if(b.dataset.t)return tpl();lv=+b.dataset.i;guide()})}
+const TP=[["presupuesto-mensual","Presupuesto mensual","Ingresos y gastos del mes, con saldo y % gastado. Va bien con el Nivel 7."],["inventario","Control de inventario","Valor total y aviso de productos por reponer. Va bien con los Niveles 1 y 3."],["registro-de-notas","Registro de notas","Promedios y aprobados o reprobados. Va bien con los Niveles 2 y 3."],["control-de-ventas","Control de ventas","Total por venta y por vendedor. Va bien con el Nivel 5."]];
+function tpl(){$("tpl").innerHTML='<h2>Plantillas descargables</h2><p class="story">Archivos .xlsx con fórmulas y filas de ejemplo. Las celdas amarillas son las que llenas. Para usarlas en Excel Online, súbelas a OneDrive y ábrelas con Excel en línea.</p>'+TP.map(p=>`<p><b>${p[1]}</b><br>${p[2]}<br><a href="plantillas/${p[0]}.xlsx" download>⬇ Descargar</a></p>`).join("");show("tpl")}
+function home(){$("home").innerHTML='<h2>Aprende Excel jugando</h2><p class="story">Cada nivel tiene una guía corta y ejercicios con casos reales. ¿Por dónde empiezas?</p><div class="row"><button class="p" id="h0">Empiezo de cero</button><button id="h1">Ya sé lo básico</button></div>';$("h0").onclick=()=>{lv=0;guide()};$("h1").onclick=()=>{lv=1;guide()};show("home")}
+function guide(){const l=L[lv];$("guide").innerHTML=`<h2>${l.n}</h2>${GD[l.id]}<div class="row"><button class="p" id="go">Empezar a jugar</button></div>`;show("guide");$("go").onclick=()=>{ix=l.ex.findIndex((_,j)=>!done[l.id+"-"+j]);if(ix<0)ix=0;load()}}
+function draw(){
+ menu();const e=cur();
+ $("dots").innerHTML=L[lv].ex.map((_,j)=>`<i class="${done[L[lv].id+"-"+j]?"done":""} ${j==ix?"cur":""}"></i>`).join("");
+ $("t").textContent=e.t;$("s").textContent=e.s;$("cn").textContent=e.c||"fx";
+ const q=!!e.o;$("bar").hidden=q;$("opts").hidden=!q;$("g").parentNode.hidden=!e.g;
+ if(e.g){const w=Math.max(...e.g.map(r=>r.length));
+ let h="<tr><th class='r'></th>"+Array.from({length:w},(_,i)=>`<th>${col(i)}</th>`).join("")+"</tr>";
+ e.g.forEach((r,ri)=>{h+=`<tr><th class="r">${ri+1}</th>`+Array.from({length:w},(_,ci)=>{const id=col(ci)+(ri+1),v=r[ci];return `<td id="c${id}" class="${id==e.c?"t":""}">${v===null||v===undefined?"":v}</td>`}).join("")+"</tr>"});
+ $("g").innerHTML=h}}
+function load(){hint=sol=false;const e=cur();$("f").value="";$("nx").hidden=true;$("ck").hidden=false;
+ $("opts").innerHTML=e.o?e.o.map((o,i)=>[o,i]).sort(()=>Math.random()-.5).map(([o,i])=>`<label class="opt"><input type="radio" name="o" value="${i}">${o}</label>`).join(""):"";
+ show("game");msg(e.o?"Elige la respuesta correcta.":"Escribe tu fórmula en la celda amarilla "+e.c+".","n");draw();if(!e.o)$("f").focus()}
+function get(id){const m=/([A-Z]+)(\d+)/.exec(id),r=cur().g[+m[2]-1];if(!r)return null;const v=r[m[1].charCodeAt(0)-65];return v===undefined?null:v}
+$("ck").onclick=check;$("f").onkeydown=e=>{if(e.key=="Enter")check()};
+function check(){
+ const e=cur();
+ if(e.o){const x=document.querySelector("input[name=o]:checked");if(!x)return msg("Elige una opción.","bad");if(+x.value!==e.a)return msg("No es esa. Mira la pista e inténtalo otra vez.","bad");return win(e)}
+ const f=$("f").value.trim();
+ if(!f)return msg("Escribe una fórmula primero.","bad");
+ if(f[0]!="=")return msg("Toda fórmula empieza con el signo =","bad");
+ if(!/[A-Za-z]+\d+/.test(f))return msg("Usa las celdas (como B2) en lugar de escribir los números a mano.","bad");
+ let r;try{r=ev(f.slice(1),get)}catch(x){return msg("Hay un error en la fórmula. Revisa paréntesis, comillas y nombres de funciones.","bad")}
+ if(e.need&&!e.need.test(f))return msg("El resultado puede salir bien, pero en este ejercicio practica la función indicada. Mira la pista.","bad");
+ const ok=typeof e.a=="number"?(typeof r=="number"&&Math.abs(r-e.a)<1e-6):String(r).toLowerCase()==e.a.toLowerCase();
+ if(!ok)return msg("Tu fórmula da "+(typeof r=="number"?+r.toFixed(4):'"'+r+'"')+". No es el resultado esperado, inténtalo otra vez.","bad");
+ win(e,r)}
+function win(e,r){
+ if(!done[key()]){done[key()]=1;pts+=sol?0:hint?5:10;save()}
+ const last=ix==L[lv].ex.length-1;
+ msg(last?"¡Correcto! Terminaste el "+L[lv].n.split(" ·")[0]+".":"¡Correcto!","ok");
+ $("pts").textContent=pts+" puntos";draw();if(e.c&&r!==undefined)$("c"+e.c).textContent=r;
+ $("ck").hidden=true;$("nx").hidden=false;$("nx").textContent=last?(lv<L.length-1?"Ir al siguiente nivel":"Repetir nivel"):"Siguiente"}
+$("nx").onclick=()=>{if(ix<L[lv].ex.length-1)ix++;else if(lv<L.length-1){lv++;return guide()}else ix=0;load()};
+$("hb").onclick=()=>{hint=true;msg("Pista: "+cur().h,"n")};
+$("sb").onclick=()=>{const e=cur();sol=true;if(e.o){document.querySelector("input[name=o][value='"+e.a+"']").checked=true;msg("Respuesta marcada. Pulsa Comprobar (sin puntos).","n")}else{$("f").value=e.sol;msg("Solución cargada. Pulsa Comprobar para verla funcionar (sin puntos).","n")}};
+$("gb").onclick=guide;home();
+</script>
+</body>
+</html>
