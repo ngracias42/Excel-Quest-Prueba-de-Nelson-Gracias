@@ -130,6 +130,38 @@ L.push({id:"6",n:"Nivel 7 · Proyecto final",ex:[
 {t:"Saldo del mes",s:"Calcula cuánto te queda. Resultado en B4.",g:[["Concepto","Monto"],["Ingresos",750],["Gastos",320],["Saldo",null]],c:"B4",a:430,h:"Ingresos menos gastos.",sol:"=B2-B3"},
 {t:"Porcentaje gastado",s:"¿Qué parte de tus ingresos gastas? Resultado en B4 (sin multiplicar por 100).",g:[["Concepto","Monto"],["Ingresos",800],["Gastos",320],["% gastado",null]],c:"B4",a:0.4,h:"Gastos entre ingresos.",sol:"=B3/B2"},
 {t:"Alerta de gasto",s:"Si gastas más de la mitad de tus ingresos escribe \"Cuidado\"; si no, \"Bien\". Resultado en B4.",g:[["Concepto","Monto"],["Ingresos",800],["Gastos",420],["Estado",null]],c:"B4",a:"Cuidado",h:"SI(B3>B2*0.5; ...)",sol:'=SI(B3>B2*0.5;"Cuidado";"Bien")',need:/SI|IF/i}]});
+const PT=[["Código","Producto","Precio"],[101,"Arroz",1.5],[102,"Frijol",2],[103,"Aceite",3.5]];
+L[0].ex.push(
+{t:"Qué es un rango",s:"¿Qué significa A1:A4?",g:null,o:["Las celdas de A1 hasta A4","Solo la celda A4","La suma de A1 y A4"],a:0,h:"Los dos puntos significan \"hasta\"."},
+{t:"Resta con celdas",s:"Resta B1 a A1 y escribe el resultado en C1.",g:[[10,4,null]],c:"C1",a:6,h:"=A1-B1",sol:"=A1-B1"});
+L[1].ex.push(
+{t:"Descuento",s:"El producto tiene 25% de descuento. Calcula el precio final en B4.",g:[["Concepto","Valor"],["Precio",80],["Descuento",0.25],["Final",null]],c:"B4",a:60,h:"Final = precio menos (precio × descuento).",sol:"=B2-B2*B3"},
+{t:"Promedio a mano",s:"Calcula el promedio de las 3 notas sin usar funciones. Resultado en B5.",g:[["Nota","Valor"],["Parcial 1",7],["Parcial 2",9],["Parcial 3",8],["Promedio",null]],c:"B5",a:8,h:"Suma las tres y divide entre 3. Usa paréntesis.",sol:"=(B2+B3+B4)/3"},
+{t:"Potencia",s:"Calcula el área de un cuadrado (lado × lado) usando ^. Resultado en B3.",g:[["Concepto","Valor"],["Lado",5],["Área",null]],c:"B3",a:25,h:"B2^2 significa B2 al cuadrado.",sol:"=B2^2"});
+L[2].ex.push(
+{t:"Mejor venta",s:"¿Cuál fue la venta más alta? Resultado en B7.",g:[["Día","Ventas"],["Lunes",40],["Martes",75],["Miércoles",22],["Jueves",90],["Viernes",63],["Mayor",null]],c:"B7",a:90,h:"MAX(B2:B6)",sol:"=MAX(B2:B6)",need:/MAX/i},
+{t:"Promedio con vacíos",s:"Hay días sin dato. Calcula el promedio de los que sí tienen. Resultado en B7.",g:[["Día","Ventas"],["Lunes",10],["Martes",null],["Miércoles",20],["Jueves",null],["Viernes",30],["Promedio",null]],c:"B7",a:20,h:"PROMEDIO ignora las celdas vacías.",sol:"=PROMEDIO(B2:B6)",need:/PROMEDIO|AVERAGE/i},
+{t:"Quiénes presentaron",s:"Algunos alumnos no presentaron examen (celda vacía). Cuenta cuántos sí en B6.",g:[["Alumno","Nota"],["Ana",8],["Luis",null],["Marta",9],["Pedro",7],["Presentaron",null]],c:"B6",a:3,h:"CONTAR(B2:B5)",sol:"=CONTAR(B2:B5)",need:/CONTAR|COUNT/i});
+L[3].ex.push(
+{t:"Mayor o menor",s:"Si la edad es 18 o más escribe \"Mayor\"; si no, \"Menor\". Resultado en C2.",g:[["Persona","Edad","Categoría"],["Carlos",16,null]],c:"C2",a:"Menor",h:"SI(B2>=18; \"Mayor\"; \"Menor\")",sol:'=SI(B2>=18;"Mayor";"Menor")',need:/SI|IF/i},
+{t:"Envío gratis",s:"Compras de 50 o más tienen envío gratis (0). Si no, el envío cuesta 3. Resultado en C2.",g:[["Cliente","Compra","Envío"],["Julia",60,null]],c:"C2",a:0,h:"SI(B2>=50; 0; 3)",sol:"=SI(B2>=50;0;3)",need:/SI|IF/i},
+{t:"Descuento con dos condiciones",s:"Descuento de 10% de la compra solo si compra ≥ 100 Y es socio (\"Si\"). Si no, 0. Resultado en D2.",g:[["Cliente","Compra","Socio","Descuento"],["Rosa",120,"Si",null]],c:"D2",a:12,h:"SI(Y(B2>=100; C2=\"Si\"); B2*0.1; 0)",sol:'=SI(Y(B2>=100;C2="Si");B2*0.1;0)',need:/Y\(|AND/i});
+L[4].ex.push(
+{t:"Buscar un nombre",s:"Busca el nombre del producto del código de B5. Resultado en C5.",g:[...PT,["Buscar",101,null]],c:"C5",a:"Arroz",h:"El nombre es la columna 2 del rango A2:C4.",sol:"=BUSCARV(B5;A2:C4;2;FALSO)",need:/BUSCARV|VLOOKUP/i},
+{t:"Costo de 4 unidades",s:"Compran 4 unidades del código 103. Calcula el total en D5.",g:[...PT,["Cód. y cant.",103,4,null]],c:"D5",a:14,h:"BUSCARV del precio multiplicado por C5.",sol:"=BUSCARV(B5;A2:C4;3;FALSO)*C5",need:/BUSCARV|VLOOKUP/i},
+{t:"Oferta o normal",s:"Si el precio del código de B5 es menor a 2 escribe \"Oferta\"; si no, \"Normal\". Resultado en C5.",g:[...PT,["Buscar",101,null]],c:"C5",a:"Oferta",h:"Pon el BUSCARV dentro de la condición del SI.",sol:'=SI(BUSCARV(B5;A2:C4;3;FALSO)<2;"Oferta";"Normal")',need:/BUSCARV|VLOOKUP/i});
+L[5].ex.push(
+{t:"Total de Luis",s:"¿Cuánto vendió Luis en total? Resultado en C7.",g:VT,c:"C7",a:270,h:"SUMAR.SI(A2:A6; \"Luis\"; C2:C6)",sol:'=SUMAR.SI(A2:A6;"Luis";C2:C6)',need:/SUMAR\.SI|SUMIF/i},
+{t:"Total de Frijol",s:"¿Cuánto se vendió de Frijol? Resultado en C7.",g:VT,c:"C7",a:230,h:"El criterio está en la columna B.",sol:'=SUMAR.SI(B2:B6;"Frijol";C2:C6)',need:/SUMAR\.SI|SUMIF/i},
+{t:"Ventas pequeñas",s:"¿Cuántas ventas fueron menores a 100? Resultado en C7.",g:VT,c:"C7",a:2,h:"CONTAR.SI(C2:C6; \"<100\")",sol:'=CONTAR.SI(C2:C6;"<100")',need:/CONTAR\.SI|COUNTIF/i});
+L[6].ex.push(
+{t:"Inmovilizar títulos",s:"Tu tabla es muy larga y quieres que los títulos queden visibles al bajar. ¿Qué usas?",g:null,o:["Inmovilizar paneles (pestaña Vista)","Combinar celdas","Ocultar columnas"],a:0,h:"Está en la pestaña Vista."},
+{t:"Quitar repetidos",s:"Tienes una lista con clientes repetidos y quieres dejar uno de cada uno. ¿Qué usas?",g:null,o:["Quitar duplicados (pestaña Datos)","Ordenar de menor a mayor","Autosuma"],a:0,h:"Está en la pestaña Datos."},
+{t:"Crear un gráfico",s:"Quieres mostrar las ventas de cada mes en un gráfico de barras. ¿Dónde lo insertas?",g:null,o:["Pestaña Insertar, sección Gráficos","Pestaña Revisar","Pestaña Vista"],a:0,h:"Insertar significa agregar elementos nuevos."});
+L[7].ex.push(
+{t:"Ahorro en 6 meses",s:"Si ahorras lo que te sobra cada mes, ¿cuánto juntas en 6 meses? Resultado en B5.",g:[["Concepto","Valor"],["Ingresos",800],["Gastos",500],["Meses",6],["Ahorro total",null]],c:"B5",a:1800,h:"(Ingresos − gastos) × meses. Usa paréntesis.",sol:"=(B2-B3)*B4"},
+{t:"Gasto promedio",s:"Calcula tu gasto promedio mensual. Resultado en B6.",g:[["Mes","Gasto"],["Julio",300],["Agosto",280],["Septiembre",320],["Octubre",300],["Promedio",null]],c:"B6",a:300,h:"PROMEDIO(B2:B5)",sol:"=PROMEDIO(B2:B5)",need:/PROMEDIO|AVERAGE/i},
+{t:"Mayor gasto",s:"¿Cuál es tu gasto más alto? Resultado en B5.",g:[["Categoría","Gasto"],["Comida",135],["Transporte",38],["Servicios",70],["Mayor gasto",null]],c:"B5",a:135,h:"MAX(B2:B4)",sol:"=MAX(B2:B4)",need:/MAX/i});
 Object.assign(GD,{
 3:`<p class="story">Lectura de 5 minutos.</p><ul><li><code>=BUSCARV(valor; rango; columna; FALSO)</code> busca el valor en la <b>primera columna</b> del rango y devuelve lo que hay en la columna que indiques.</li><li>Ejemplo: <code>=BUSCARV(B5;A2:C4;3;FALSO)</code> devuelve el precio (columna 3) del código de B5.</li><li><code>FALSO</code> pide coincidencia exacta.</li></ul><p><b>Error común:</b> que el valor buscado no esté en la primera columna del rango. En Excel Online también existe BUSCARX, pero aquí practicamos BUSCARV.</p>`,
 4:`<p class="story">Lectura de 4 minutos.</p><ul><li><code>=CONTAR.SI(rango; criterio)</code> cuenta cuántas celdas cumplen.</li><li><code>=SUMAR.SI(rango; criterio; rango_suma)</code> suma solo lo que cumple.</li><li>Criterios de texto: <code>"Ana"</code>. Con operador: <code>"&gt;90"</code>.</li></ul><p><b>Error común:</b> usar rangos de distinto tamaño o olvidar las comillas del criterio.</p>`,
