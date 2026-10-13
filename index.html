@@ -162,6 +162,38 @@ L[7].ex.push(
 {t:"Ahorro en 6 meses",s:"Si ahorras lo que te sobra cada mes, ¿cuánto juntas en 6 meses? Resultado en B5.",g:[["Concepto","Valor"],["Ingresos",800],["Gastos",500],["Meses",6],["Ahorro total",null]],c:"B5",a:1800,h:"(Ingresos − gastos) × meses. Usa paréntesis.",sol:"=(B2-B3)*B4"},
 {t:"Gasto promedio",s:"Calcula tu gasto promedio mensual. Resultado en B6.",g:[["Mes","Gasto"],["Julio",300],["Agosto",280],["Septiembre",320],["Octubre",300],["Promedio",null]],c:"B6",a:300,h:"PROMEDIO(B2:B5)",sol:"=PROMEDIO(B2:B5)",need:/PROMEDIO|AVERAGE/i},
 {t:"Mayor gasto",s:"¿Cuál es tu gasto más alto? Resultado en B5.",g:[["Categoría","Gasto"],["Comida",135],["Transporte",38],["Servicios",70],["Mayor gasto",null]],c:"B5",a:135,h:"MAX(B2:B4)",sol:"=MAX(B2:B4)",need:/MAX/i});
+const dsr=v=>{const m=typeof v=="string"&&/^(\d\d)\/(\d\d)\/(\d{4})$/.exec(v);return m?Date.UTC(+m[3],+m[2]-1,+m[1])/864e5+25569:v};
+L.push({id:"7",n:"Nivel 8 · Texto",ex:[
+{t:"Unir nombre y apellido",s:"Une el nombre y el apellido con un espacio en medio. Resultado en C2.",g:[["Nombre","Apellido","Completo"],["Ana","López",null]],c:"C2",a:"Ana López",cs:1,h:"CONCATENAR(A2; \" \"; B2). El espacio va entre comillas.",sol:'=CONCATENAR(A2;" ";B2)',need:/CONCATENAR|CONCAT/i},
+{t:"Unir con &",s:"Escribe \"Hola Ana\" en B2 usando el símbolo & y la celda A2.",g:[["Nombre","Saludo"],["Ana",null]],c:"B2",a:"Hola Ana",cs:1,h:"=\"Hola \"&A2",sol:'="Hola "&A2',need:/&/},
+{t:"Primeras letras",s:"Saca las 2 primeras letras del código (el país). Resultado en B2.",g:[["Código","País"],["SV-2026-045",null]],c:"B2",a:"SV",cs:1,h:"IZQUIERDA(A2; 2)",sol:"=IZQUIERDA(A2;2)",need:/IZQUIERDA|LEFT/i},
+{t:"Últimas letras",s:"Saca los 3 últimos caracteres del código. Resultado en B2.",g:[["Código","Número"],["SV-2026-045",null]],c:"B2",a:"045",cs:1,h:"DERECHA(A2; 3)",sol:"=DERECHA(A2;3)",need:/DERECHA|RIGHT/i},
+{t:"Sacar el año",s:"El año son los 4 caracteres que empiezan en la posición 4. Resultado en B2.",g:[["Código","Año"],["SV-2026-045",null]],c:"B2",a:"2026",cs:1,h:"EXTRAE(texto; inicio; cantidad)",sol:"=EXTRAE(A2;4;4)",need:/EXTRAE|MID/i},
+{t:"Contar caracteres",s:"¿Cuántos caracteres tiene el texto? Resultado en B2.",g:[["Texto","Largo"],["Excel Quest",null]],c:"B2",a:11,h:"LARGO(A2). El espacio también cuenta.",sol:"=LARGO(A2)",need:/LARGO|LEN/i},
+{t:"Todo en mayúsculas",s:"Convierte el nombre a MAYÚSCULAS. Resultado en B2.",g:[["Nombre","Mayúsculas"],["ana lópez",null]],c:"B2",a:"ANA LÓPEZ",cs:1,h:"MAYUSC(A2)",sol:"=MAYUSC(A2)",need:/MAYUSC|UPPER/i},
+{t:"Nombre propio",s:"Deja cada palabra con la primera letra en mayúscula. Resultado en B2.",g:[["Nombre","Arreglado"],["mARTA gómez",null]],c:"B2",a:"Marta Gómez",cs:1,h:"NOMPROPIO(A2)",sol:"=NOMPROPIO(A2)",need:/NOMPROPIO|PROPER/i}]});
+L.push({id:"8",n:"Nivel 9 · Fechas",ex:[
+{t:"Qué es una fecha",s:"Para Excel, ¿qué es una fecha?",g:null,o:["Un número que cuenta los días desde 1900","Solo texto con diagonales","Una imagen"],a:0,h:"Por eso se pueden restar."},
+{t:"La función HOY",s:"¿Qué hace =HOY()?",g:null,o:["Muestra la fecha de hoy y se actualiza sola","Escribe una fecha fija","Cuenta los días del mes"],a:0,h:"Cambia cada día."},
+{t:"Restar fechas",s:"¿Cuántos días hay entre las dos fechas? Resultado en B4.",g:[["Concepto","Fecha"],["Inicio","01/10/2026"],["Fin","25/10/2026"],["Días",null]],c:"B4",a:24,h:"Fin menos inicio.",sol:"=B3-B2"},
+{t:"Función DIAS",s:"Calcula los días entre las fechas con la función DIAS. Resultado en B4.",g:[["Concepto","Fecha"],["Inicio","05/09/2026"],["Fin","05/10/2026"],["Días",null]],c:"B4",a:30,h:"DIAS(fecha final; fecha inicial)",sol:"=DIAS(B3;B2)",need:/DIAS|DAYS/i},
+{t:"Sacar el año",s:"Saca el año de la fecha. Resultado en B3.",g:[["Concepto","Fecha"],["Fecha","15/03/2024"],["Año",null]],c:"B3",a:2024,h:"AÑO(B2)",sol:"=AÑO(B2)",need:/A[ÑN]O\(|YEAR/i},
+{t:"Sacar el mes",s:"Saca el número del mes. Resultado en B3.",g:[["Concepto","Fecha"],["Fecha","15/03/2024"],["Mes",null]],c:"B3",a:3,h:"MES(B2)",sol:"=MES(B2)",need:/MES|MONTH/i},
+{t:"Años de edad",s:"Calcula los años de edad restando los años. Resultado en B4.",g:[["Concepto","Fecha"],["Nacimiento","10/05/1995"],["Hoy","01/01/2026"],["Edad",null]],c:"B4",a:31,h:"AÑO(B3) menos AÑO(B2).",sol:"=AÑO(B3)-AÑO(B2)",need:/A[ÑN]O\(|YEAR/i},
+{t:"Aviso de vencimiento",s:"Si faltan menos de 45 días para vencer escribe \"Pronto\"; si no, \"Ok\". Resultado en B4.",g:[["Concepto","Fecha"],["Hoy","01/12/2026"],["Vence","31/12/2026"],["Aviso",null]],c:"B4",a:"Pronto",h:"SI(B3-B2<45; ...)",sol:'=SI(B3-B2<45;"Pronto";"Ok")',need:/SI|IF/i}]});
+L.push({id:"9",n:"Nivel 10 · Errores comunes",ex:[
+{t:"#DIV/0!",s:"¿Por qué aparece #DIV/0!?",g:null,o:["Se divide entre cero o entre una celda vacía","Se escribió mal el nombre de una función","La columna es muy angosta"],a:0,h:"DIV es de división."},
+{t:"#NOMBRE?",s:"¿Qué significa #NOMBRE?",g:null,o:["Excel no reconoce el nombre de una función o rango","Falta dinero en la celda","La fórmula está bien"],a:0,h:"Revisa cómo escribiste la función."},
+{t:"####",s:"Una celda muestra ####. ¿Cómo se arregla?",g:null,o:["Ensanchando la columna","Borrando la fórmula","Cerrando el archivo"],a:0,h:"El número no cabe en la celda."},
+{t:"#N/A",s:"BUSCARV devuelve #N/A. ¿Qué pasó?",g:null,o:["No encontró el valor buscado","Se dividió entre cero","Falta un paréntesis"],a:0,h:"N/A significa no disponible."},
+{t:"#VALOR!",s:"¿Cuándo sale #VALOR!?",g:null,o:["Cuando una operación usa texto donde espera números","Cuando la columna es angosta","Cuando guardas el archivo"],a:0,h:"Sumar \"hola\"+1 produce este error."},
+{t:"#REF!",s:"¿Cuándo sale #REF!?",g:null,o:["Cuando se borró una celda que usaba la fórmula","Cuando hay demasiados datos","Cuando falta una coma"],a:0,h:"REF viene de referencia."},
+{t:"Ocultar #DIV/0!",s:"Divide el total entre las personas, pero si hay error escribe 0. Resultado en B4.",g:[["Concepto","Valor"],["Total",100],["Personas",0],["Cada uno",null]],c:"B4",a:0,h:"SI.ERROR(fórmula; valor si falla)",sol:"=SI.ERROR(B2/B3;0)",need:/SI\.ERROR|IFERROR/i},
+{t:"Producto no existe",s:"Busca el precio del código de B5. Si no existe, escribe \"No existe\". Resultado en C5.",g:[...PT,["Buscar",999,null]],c:"C5",a:"No existe",h:"Pon el BUSCARV dentro de SI.ERROR.",sol:'=SI.ERROR(BUSCARV(B5;A2:C4;3;FALSO);"No existe")',need:/SI\.ERROR|IFERROR/i}]});
+Object.assign(GD,{
+7:`<p class="story">Lectura de 4 minutos.</p><ul><li><code>=A2&amp;" "&amp;B2</code> o <code>=CONCATENAR(A2;" ";B2)</code> unen textos.</li><li><code>IZQUIERDA(texto; n)</code>, <code>DERECHA(texto; n)</code> y <code>EXTRAE(texto; inicio; n)</code> cortan pedazos.</li><li><code>LARGO(texto)</code> cuenta caracteres.</li><li><code>MAYUSC</code>, <code>MINUSC</code> y <code>NOMPROPIO</code> cambian las mayúsculas.</li></ul><p><b>Error común:</b> olvidar las comillas del espacio <code>" "</code>.</p>`,
+8:`<p class="story">Lectura de 4 minutos.</p><ul><li>Excel guarda las fechas como números, por eso se pueden restar: <code>=B3-B2</code> da los días entre dos fechas.</li><li><code>=DIAS(fin; inicio)</code> hace lo mismo.</li><li><code>AÑO</code>, <code>MES</code> y <code>DIA</code> sacan una parte de la fecha.</li><li><code>=HOY()</code> da la fecha de hoy y se actualiza sola.</li></ul><p><b>Error común:</b> que la fecha quede como texto (se alinea a la izquierda) y no como fecha.</p>`,
+9:`<p class="story">Lectura de 4 minutos.</p><ul><li><code>#DIV/0!</code> división entre cero. <code>#N/A</code> no se encontró el dato. <code>#VALOR!</code> texto donde iba un número.</li><li><code>#NOMBRE?</code> función mal escrita. <code>#REF!</code> se borró una celda usada. <code>####</code> columna angosta.</li><li><code>=SI.ERROR(fórmula; valor si falla)</code> muestra un valor limpio cuando hay error.</li></ul><p><b>Error común:</b> esconder el error sin entender por qué salió.</p>`});
 Object.assign(GD,{
 3:`<p class="story">Lectura de 5 minutos.</p><ul><li><code>=BUSCARV(valor; rango; columna; FALSO)</code> busca el valor en la <b>primera columna</b> del rango y devuelve lo que hay en la columna que indiques.</li><li>Ejemplo: <code>=BUSCARV(B5;A2:C4;3;FALSO)</code> devuelve el precio (columna 3) del código de B5.</li><li><code>FALSO</code> pide coincidencia exacta.</li></ul><p><b>Error común:</b> que el valor buscado no esté en la primera columna del rango. En Excel Online también existe BUSCARX, pero aquí practicamos BUSCARV.</p>`,
 4:`<p class="story">Lectura de 4 minutos.</p><ul><li><code>=CONTAR.SI(rango; criterio)</code> cuenta cuántas celdas cumplen.</li><li><code>=SUMAR.SI(rango; criterio; rango_suma)</code> suma solo lo que cumple.</li><li>Criterios de texto: <code>"Ana"</code>. Con operador: <code>"&gt;90"</code>.</li></ul><p><b>Error común:</b> usar rangos de distinto tamaño o olvidar las comillas del criterio.</p>`,
@@ -173,7 +205,7 @@ try{const d=JSON.parse(localStorage.getItem("xq")||"{}");done=d.done||{};pts=d.p
 const save=()=>{try{localStorage.setItem("xq",JSON.stringify({done,pts}))}catch(e){}};
 const col=i=>String.fromCharCode(65+i);
 function ev(src,get){
- const T=[],re=/\s*(?:(\d+(?:\.\d+)?)|"([^"]*)"|([A-Za-z][A-Za-z0-9_.]*)|(<>|>=|<=|[-+*\/^&()=<>;,:]))/y;
+ const T=[],re=/\s*(?:(\d+(?:\.\d+)?)|"([^"]*)"|([A-Za-zÑñ][A-Za-zÑñ0-9_.]*)|(<>|>=|<=|[-+*\/^&()=<>;,:]))/y;
  src=src.trim();re.lastIndex=0;
  while(re.lastIndex<src.length){const m=re.exec(src);if(!m)throw 0;
   if(m[1]!==undefined)T.push({k:"n",v:+m[1]});else if(m[2]!==undefined)T.push({k:"s",v:m[2]});else if(m[3])T.push({k:"i",v:m[3].toUpperCase()});else T.push({k:"o",v:m[4]})}
@@ -186,6 +218,10 @@ function ev(src,get){
  const bv=a=>{const r=a[1],w=r.w||1,k=num(a[2]);for(let i=0;i<r.length;i+=w)if(String(r[i]).toLowerCase()==String(a[0]).toLowerCase()){const v=r[i+k-1];if(v===undefined||v===null)throw 0;return v}throw 0};
  Object.assign(F,{BUSCARV:bv,VLOOKUP:bv,"CONTAR.SI":a=>a[0].filter(crit(a[1])).length,"SUMAR.SI":a=>{const s=a[2]||a[0],f=crit(a[1]);return a[0].reduce((t,v,i)=>t+(f(v)&&typeof s[i]=="number"?s[i]:0),0)}});
  Object.assign(F,{COUNTIF:F["CONTAR.SI"],SUMIF:F["SUMAR.SI"]});
+ const tx=v=>v===null||v===undefined?"":String(v),dd=v=>new Date((num(v)-25569)*864e5);
+ Object.assign(F,{CONCATENAR:a=>a.map(tx).join(""),IZQUIERDA:a=>tx(a[0]).slice(0,num(a[1]??1)),DERECHA:a=>{const n=num(a[1]??1);return n?tx(a[0]).slice(-n):""},LARGO:a=>tx(a[0]).length,MAYUSC:a=>tx(a[0]).toUpperCase(),MINUSC:a=>tx(a[0]).toLowerCase(),NOMPROPIO:a=>tx(a[0]).toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase()),EXTRAE:a=>tx(a[0]).substr(num(a[1])-1,num(a[2])),SUPRESP:a=>tx(a[0]).trim().replace(/\s+/g," "),
+  "AÑO":a=>dd(a[0]).getUTCFullYear(),MES:a=>dd(a[0]).getUTCMonth()+1,DIA:a=>dd(a[0]).getUTCDate(),DIAS:a=>num(a[0])-num(a[1])});
+ Object.assign(F,{CONCAT:F.CONCATENAR,LEFT:F.IZQUIERDA,RIGHT:F.DERECHA,LEN:F.LARGO,UPPER:F.MAYUSC,LOWER:F.MINUSC,PROPER:F.NOMPROPIO,MID:F.EXTRAE,TRIM:F.SUPRESP,ANO:F["AÑO"],YEAR:F["AÑO"],MONTH:F.MES,DAY:F.DIA,DAYS:F.DIAS});
  const cmp=(l,o,r)=>{if(typeof l=="string"||typeof r=="string"){l=String(l??"").toLowerCase();r=String(r??"").toLowerCase()}else{l=num(l);r=num(r)}
   return{"=":l==r,"<>":l!=r,"<":l<r,">":l>r,"<=":l<=r,">=":l>=r}[o]};
  function C(){let l=A();while(isO("=","<>","<",">","<=",">=")){const o=T[p++].v;l=cmp(l,o,A())}return l}
@@ -197,7 +233,8 @@ function ev(src,get){
   if(t.k=="n"||t.k=="s")return t.v;
   if(t.k=="o"&&t.v=="("){const v=C();if(!isO(")"))throw 0;p++;return v}
   if(t.k=="i"){
-   if(isO("(")){p++;const f=F[t.v];if(!f)throw 0;const a=[];if(isO(")")){p++}else{for(;;){a.push(C());if(isO(";",",")){p++;continue}if(isO(")")){p++;break}throw 0}}return f(a)}
+   if(isO("(")){p++;if(t.v=="SI.ERROR"||t.v=="IFERROR"){let v,p0=p;try{v=C()}catch(x){v=undefined;p=p0;let d=0;while(p<T.length&&!(d==0&&isO(";",","))){if(isO("("))d++;if(isO(")"))d--;p++}}if(!isO(";",","))throw 0;p++;const w=C();if(!isO(")"))throw 0;p++;return v===undefined?w:v}
+   const f=F[t.v];if(!f)throw 0;const a=[];if(isO(")")){p++}else{for(;;){a.push(C());if(isO(";",",")){p++;continue}if(isO(")")){p++;break}throw 0}}return f(a)}
    if(t.v=="FALSO"||t.v=="FALSE")return false;if(t.v=="VERDADERO"||t.v=="TRUE")return true;if(!/^[A-Z]+\d+$/.test(t.v))throw 0;
    if(isO(":")){p++;const e=T[p++];if(!e||!/^[A-Z]+\d+$/.test(e.v))throw 0;return rng(t.v,e.v,get)}
    return get(t.v)}
@@ -229,7 +266,7 @@ function draw(){
 function load(){hint=sol=false;const e=cur();$("f").value="";$("nx").hidden=true;$("ck").hidden=false;
  $("opts").innerHTML=e.o?e.o.map((o,i)=>[o,i]).sort(()=>Math.random()-.5).map(([o,i])=>`<label class="opt"><input type="radio" name="o" value="${i}">${o}</label>`).join(""):"";
  show("game");msg(e.o?"Elige la respuesta correcta.":"Escribe tu fórmula en la celda amarilla "+e.c+".","n");draw();if(!e.o)$("f").focus()}
-function get(id){const m=/([A-Z]+)(\d+)/.exec(id),r=cur().g[+m[2]-1];if(!r)return null;const v=r[m[1].charCodeAt(0)-65];return v===undefined?null:v}
+function get(id){const m=/([A-Z]+)(\d+)/.exec(id),r=cur().g[+m[2]-1];if(!r)return null;const v=r[m[1].charCodeAt(0)-65];return v===undefined?null:dsr(v)}
 $("ck").onclick=check;$("f").onkeydown=e=>{if(e.key=="Enter")check()};
 function check(){
  const e=cur();
@@ -240,7 +277,7 @@ function check(){
  if(!/[A-Za-z]+\d+/.test(f))return msg("Usa las celdas (como B2) en lugar de escribir los números a mano.","bad");
  let r;try{r=ev(f.slice(1),get)}catch(x){return msg("Hay un error en la fórmula. Revisa paréntesis, comillas y nombres de funciones.","bad")}
  if(e.need&&!e.need.test(f))return msg("El resultado puede salir bien, pero en este ejercicio practica la función indicada. Mira la pista.","bad");
- const ok=typeof e.a=="number"?(typeof r=="number"&&Math.abs(r-e.a)<1e-6):String(r).toLowerCase()==e.a.toLowerCase();
+ const ok=typeof e.a=="number"?(typeof r=="number"&&Math.abs(r-e.a)<1e-6):(e.cs?String(r)==e.a:String(r).toLowerCase()==e.a.toLowerCase());
  if(!ok)return msg("Tu fórmula da "+(typeof r=="number"?+r.toFixed(4):'"'+r+'"')+". No es el resultado esperado, inténtalo otra vez.","bad");
  win(e,r)}
 function win(e,r){
